@@ -1,34 +1,23 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('github validation'){
-          steps{
-                 git url: 'https://github.com/akshu20791/addressbook-cicd-project'
-          }
-        }
-        stage('compiling the code'){
-          steps{
-                 sh 'mvn compile'
-          }
-        }
-        stage('testing the code'){
-            steps{
-                sh 'mvn test'
+    tools {
+        maven 'maven3'
+        jdk 'java11'
+    }
+    stages {
+        stage('checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/AbdullahGhous78623/addressbook-cicd-abdullah.git'
             }
         }
-        stage('qa of the code'){
-            steps{
-                sh 'mvn pmd:pmd'
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
             }
         }
-        stage('package'){
-            steps{
-                sh 'mvn package'
-            }
-        }
-        stage("deploy the project on tomcat"){
-            steps{
-                sh "sudo mv /var/lib/jenkins/workspace/pipeline/target/addressbook.war /home/ubuntu/apache-tomcat-8.5.100/webapps/"
+        stage("deploy the project on tomcat") {
+            steps {
+                sh 'ansible-playbook -i inventory.ini deploy-tomcat.yml'
             }
         }
     }

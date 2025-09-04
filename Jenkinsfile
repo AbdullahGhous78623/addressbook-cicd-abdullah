@@ -1,24 +1,30 @@
 pipeline {
     agent any
+
     tools {
-        maven 'maven3'
-        jdk 'java11'
+        maven 'maven3'   // Make sure this matches the Jenkins Maven tool name
+        jdk 'java11'     // Make sure this matches the Jenkins JDK tool name
     }
+
     stages {
-        stage('checkout') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/AbdullahGhous78623/addressbook-cicd-abdullah.git'
             }
         }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
-        stage("deploy the project on tomcat") {
+
+        stage('Deploy to EC2') {
             steps {
-                sh 'ansible-playbook -i inventory.ini deploy-tomcat.yml'
+                // No inventory.ini needed; using default /etc/ansible/hosts
+                sh 'ansible-playbook /etc/ansible/deploy-tomcat.yml'
             }
         }
     }
 }
+av

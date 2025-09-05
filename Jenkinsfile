@@ -22,7 +22,10 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 // No inventory.ini needed; using default /etc/ansible/hosts
-                sh 'ansible-playbook /etc/ansible/deploy-tomcat.yml'
+                sh '''
+                cd /home/ansible/playbooks
+                ansible-playbook -i hosts deploy.yml
+                '''
             }
         }
     }
